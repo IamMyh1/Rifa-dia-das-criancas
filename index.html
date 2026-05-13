@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa Dia dos Namorados</title>
+    <style>
+        :root {
+            --disponivel: #f8d7da;
+            --comprado: #dc3545; /* Vermelho temático */
+            --texto: #333;
+            --fundo: #fff5f7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fundo);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: var(--texto);
+        }
+
+        h1 { color: #b02a37; margin-bottom: 5px; }
+        .subtitulo { margin-bottom: 20px; color: #666; font-style: italic; }
+
+        .stats {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .rifa-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .numero {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--disponivel);
+            border: 1px solid #f5c2c7;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .numero:hover { transform: translateY(-3px); filter: brightness(0.9); }
+
+        .numero.pago {
+            background-color: var(--comprado);
+            color: white;
+            border-color: #a52834;
+        }
+
+        /* Modal */
+        #modal, #overlay { display: none; position: fixed; }
+        #overlay { top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
+        #modal { 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: white; padding: 30px; 
+            border-radius: 15px; z-index: 1000; 
+            width: 90%; max-width: 320px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .btn-save { background: #28a745; color: white; }
+        .btn-delete { background: #dc3545; color: white; }
+        .btn-close { background: #f8f9fa; color: #333; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <h1>❤️ Rifa Dia dos Namorados</h1>
+    <p class="subtitulo">Projeto Escolar - Registro em Tempo Real</p>
+
+    <div class="stats">Números Vendidos: <span id="contador">0</span> / 200</div>
+
+    <div class="rifa-container" id="rifa">Carregando rifa...</div>
+
+    <div id="overlay" onclick="fechar()"></div>
+    <div id="modal">
+        <h3 id="modal-titulo" style="margin-top:0"></h3>
+        <div id="form-compra">
+            <input type="text" id="nome" placeholder="Nome do Comprador">
+            <input type="tel" id="telefone" placeholder="Telefone (WhatsApp)">
+            <div class="btn-group">
+                <button class="btn-save" onclick="salvar()">Confirmar Reserva</button>
+                <button class="btn-close" onclick="fechar()">Cancelar</button>
+            </div>
+        </div>
+        <div id="info-pago" style="display:none;">
+            <p id="detalhes-cliente" style="line-height: 1.5"></p>
+            <div class="btn-group">
+                <button class="btn-delete" onclick="apagar()">Apagar Registro</button>
+                <button class="btn-close" onclick="fechar()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SDK do Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Suas credenciais aplicadas
+        const firebaseConfig = {
+            apiKey: "AIzaSyA8p_-E1qf1I-5q2W-oL2rhRqWFQckMKSA",
+            authDomain: "rifa-dia-dos-namorados-a6c46.firebaseapp.com",
+            projectId: "rifa-dia-dos-namorados-a6c46",
+            storageBucket: "rifa-dia-dos-namorados-a6c46.firebasestorage.app",
+            messagingSenderId: "222551804426",
+            appId: "1:222551804426:web:8b7ba72dd2a2fd680dedf3",
+            measurementId: "G-123KHW6RSL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const totalNumeros = 200;
+        let selecionado = null;
+        let dadosLocais = {};
+
+        // Sincronização em tempo real
+        onSnapshot(collection(db, "vendas"), (snapshot) => {
+            dadosLocais = {};
+            snapshot.forEach((doc) => {
+                dadosLocais[doc.id] = doc.data();
+            });
+            desenharRifa();
+        });
+
+        window.desenharRifa = function() {
+            const container = document.getElementById('rifa');
+            container.innerHTML = '';
+            let vendidos = 0;
+
+            for (let i = 1; i <= totalNumeros; i++) {
+                const div = document.createElement('div');
+                div.className = 'numero' + (dadosLocais[i] ? ' pago' : '');
+                div.innerText = i;
+                div.onclick = () => abrirModal(i);
+                container.appendChild(div);
+                if (dadosLocais[i]) vendidos++;
+            }
+            document.getElementById('contador').innerText = vendidos;
+        }
+
+        window.abrirModal = function(num) {
+            selecionado = num;
+            document.getElementById('modal-titulo').innerText = "Número " + num;
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+
+            if (dadosLocais[num]) {
+                document.getElementById('form-compra').style.display = 'none';
+                document.getElementById('info-pago').style.display = 'block';
+                document.getElementById('detalhes-cliente').innerHTML = 
+                    `<strong>👤 Nome:</strong> ${dadosLocais[num].nome}<br>` +
+                    `<strong>📱 Tel:</strong> ${dadosLocais[num].telefone}`;
+            } else {
+                document.getElementById('form-compra').style.display = 'block';
+                document.getElementById('info-pago').style.display = 'none';
+                document.getElementById('nome').value = '';
+                document.getElementById('telefone').value = '';
+            }
+        }
+
+        window.salvar = async function() {
+            const n = document.getElementById('nome').value;
+            const t = document.getElementById('telefone').value;
+            if (!n || !t) return alert("Preencha os dados do comprador!");
+            
+            try {
+                // Salva na coleção "vendas" usando o número como ID
+                await setDoc(doc(db, "vendas", selecionado.toString()), {
+                    nome: n,
+                    telefone: t,
+                    data: new Date().toISOString()
+                });
+                fechar();
+            } catch (e) { alert("Erro ao salvar: " + e.message); }
+        }
+
+        window.apagar = async function() {
+            if (confirm(`Tem certeza que deseja liberar o número ${selecionado}?`)) {
+                try {
+                    await deleteDoc(doc(db, "vendas", selecionado.toString()));
+                    fechar();
+                } catch (e) { alert("Erro ao apagar: " + e.message); }
+            }
+        }
+
+        window.fechar = function() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
