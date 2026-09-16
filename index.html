@@ -1,226 +1,1582 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rifa Dia dos Pais</title>
-    <style>
-        :root {
-            --disponivel: #e3f2fd;
-            --comprado: #0d6efd; /* Azul temático */
-            --texto: #333;
-            --fundo: #f8f9fa;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caderno da Rifa Escolar 🧸 Gerenciador</title>
+  
+  <!-- Fontes Google Bobbie Goods: Gaegu (títulos e números desenhados à mão) e Fredoka (leitura limpa e redondinha) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--fundo);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            color: var(--texto);
-        }
+  <style>
+    :root {
+      /* Paleta Autêntica de Livro de Colorir Bobbie Goods */
+      --bg-canvas: #FFFDF7;
+      --bg-card: #FFF8EE;
+      --bg-card-alt: #FFFBF2;
+      --bg-white: #FFFFFF;
+      --stroke-dark: #2C211B;
 
-        h1 { color: #0b5ed7; margin-bottom: 5px; }
-        .subtitulo { margin-bottom: 5px; color: #666; font-style: italic; }
-        .data-limite { margin-bottom: 20px; color: #dc3545; font-weight: bold; font-size: 0.95rem; }
+      /* Tons de Giz & Canetinha Pastel */
+      --color-yellow: #FEE47A;
+      --color-yellow-hover: #FFF0A2;
+      --color-mustard: #E4AF38;
+      --color-pink: #F8BAC8;
+      --color-pink-hover: #FFCDD7;
+      --color-red: #F06764;
+      --color-blue: #B6DAFA;
+      --color-blue-hover: #CFE7FC;
+      --color-green: #85C274;
+      --color-green-hover: #9CD68D;
+      --color-orange: #F89D42;
+      --color-cocoa: #7F4E31;
 
-        .stats {
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+      /* Sombras Sólidas 3D Cartoon */
+      --shadow-sm: 0 3px 0 var(--stroke-dark);
+      --shadow-md: 0 4px 0 var(--stroke-dark);
+      --shadow-lg: 0 6px 0 var(--stroke-dark);
 
-        .rifa-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-            gap: 10px;
-            max-width: 800px;
-            width: 100%;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+      /* Tipografia */
+      --font-display: 'Gaegu', cursive, sans-serif;
+      --font-body: 'Fredoka', -apple-system, BlinkMacSystemFont, sans-serif;
 
-        .numero {
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--disponivel);
-            border: 1px solid #b6d4fe;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
+      --trans-bouncy: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
 
-        .numero:hover { transform: translateY(-3px); filter: brightness(0.9); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .numero.pago {
-            background-color: var(--comprado);
-            color: white;
-            border-color: #0a58ca;
-        }
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--stroke-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 24px 16px 80px;
+    }
 
-        /* Modal */
-        #modal, #overlay { display: none; position: fixed; }
-        #overlay { top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
-        #modal { 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            background: white; padding: 30px; 
-            border-radius: 15px; z-index: 1000; 
-            width: 90%; max-width: 320px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
+    .app-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1rem; }
-        .btn-save { background: #28a745; color: white; }
-        .btn-delete { background: #dc3545; color: white; }
-        .btn-close { background: #f8f9fa; color: #333; border: 1px solid #ddd; }
-    </style>
+    /* =========================================
+       1. CABEÇALHO ILUSTRADO (BOBBIE GOODS)
+       ========================================= */
+    .header-card {
+      background: var(--bg-card);
+      border: 3.5px solid var(--stroke-dark);
+      border-radius: 26px;
+      box-shadow: var(--shadow-md);
+      padding: 22px 26px;
+      display: grid;
+      grid-template-columns: 88px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      position: relative;
+    }
+
+    .seal-wrap {
+      width: 88px;
+      height: 88px;
+      flex-shrink: 0;
+      animation: floatGentle 4.5s ease-in-out infinite;
+    }
+
+    .header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge-pill {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 2px solid var(--stroke-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .badge-date { background: var(--color-pink); color: var(--stroke-dark); }
+    .badge-target { background: var(--color-blue); color: var(--stroke-dark); }
+    .badge-admin { background: var(--color-yellow); color: var(--stroke-dark); }
+
+    .header-title {
+      font-family: var(--font-display);
+      font-size: 2.65rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--stroke-dark);
+    }
+
+    .header-sub {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: #6C5547;
+    }
+
+    .header-mascot {
+      width: 120px;
+      height: 135px;
+      flex-shrink: 0;
+      animation: gentleWiggle 5s ease-in-out infinite;
+    }
+
+    /* =========================================
+       2. CARDS DE MÉTRICAS ILUSTRADOS COM ADESIVOS
+       ========================================= */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 3px solid var(--stroke-dark);
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: var(--trans-bouncy);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 2.5px solid var(--stroke-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      flex-shrink: 0;
+    }
+
+    .metric-icon.sold { background: var(--color-pink); }
+    .metric-icon.reserved { background: var(--color-yellow); }
+    .metric-icon.avail { background: var(--color-green); }
+    .metric-icon.money { background: var(--color-blue); }
+
+    .metric-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6C5547;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--stroke-dark);
+    }
+
+
+
+    /* =========================================
+       3. FERRAMENTAS DO GERENCIADOR (BOTÕES TÁTEIS)
+       ========================================= */
+    .toolbar-card {
+      background: var(--bg-card);
+      border: 3.5px solid var(--stroke-dark);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+      padding: 18px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .toolbar-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 38px 11px 40px;
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 14px;
+      background: var(--bg-white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--stroke-dark);
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(44, 33, 27, 0.06);
+      transition: var(--trans-bouncy);
+    }
+
+    .search-input:focus {
+      border-color: var(--color-orange);
+      box-shadow: 0 0 0 3px rgba(248, 157, 66, 0.25);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.05rem;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .search-shortcut {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #EFE4D6;
+      border: 1.5px solid var(--stroke-dark);
+      border-radius: 6px;
+      padding: 1px 6px;
+      color: var(--stroke-dark);
+    }
+
+    .tools-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Botões Chunky 3D Cartoon */
+    .btn-chunky {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--stroke-dark);
+      background: var(--color-yellow);
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 14px;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--trans-bouncy);
+      user-select: none;
+    }
+
+    .btn-chunky:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      background: var(--color-yellow-hover);
+    }
+
+    .btn-chunky:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--stroke-dark);
+    }
+
+    .btn-chunky.blue { background: var(--color-blue); }
+    .btn-chunky.blue:hover { background: var(--color-blue-hover); }
+    .btn-chunky.pink { background: var(--color-pink); }
+    .btn-chunky.pink:hover { background: var(--color-pink-hover); }
+
+    /* Barra de Navegação por Centenas & Status */
+    .toolbar-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-top: 2px dashed rgba(44, 33, 27, 0.15);
+      padding-top: 14px;
+    }
+
+    .centenas-tabs, .status-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-pill {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--stroke-dark);
+      background: var(--bg-white);
+      border: 2px solid var(--stroke-dark);
+      border-radius: 12px;
+      padding: 5px 12px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      transition: var(--trans-bouncy);
+    }
+
+    .tab-pill:hover { background: #FFF2D6; }
+
+    .tab-pill.active {
+      background: var(--color-yellow);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 var(--stroke-dark);
+    }
+
+    .status-pill {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 2px solid var(--stroke-dark);
+      border-radius: 999px;
+      padding: 4px 12px;
+      cursor: pointer;
+      background: var(--bg-white);
+      color: var(--stroke-dark);
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      transition: var(--trans-bouncy);
+    }
+
+    .status-pill.active {
+      background: var(--stroke-dark);
+      color: #fff;
+    }
+
+    /* =========================================
+       4. GRADE DOS 300 BILHETES (DESENHO ARTESANAL LIMPO)
+       ========================================= */
+    .rifa-wrapper {
+      background: var(--bg-card);
+      border: 3.5px solid var(--stroke-dark);
+      border-radius: 26px;
+      box-shadow: var(--shadow-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .grid-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #7F5E48;
+    }
+
+    .rifa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+      gap: 9px;
+    }
+
+    /* O Bilhete da Sorte no Estilo Drawing */
+    .ticket-card {
+      height: 72px;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 4px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--trans-bouncy);
+      position: relative;
+      user-select: none;
+    }
+
+    .ticket-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      z-index: 2;
+    }
+
+    .ticket-card:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--stroke-dark);
+    }
+
+    .ticket-card.faded {
+      opacity: 0.16;
+      pointer-events: none;
+    }
+
+    /* Bilhete Disponível: Picotado/Tracejado de Cupom */
+    .ticket-card.disponivel {
+      background: var(--bg-white);
+      border: 2.5px dashed var(--stroke-dark);
+    }
+    .ticket-card.disponivel .ticket-num {
+      color: var(--stroke-dark);
+    }
+    .ticket-card.disponivel .ticket-sub {
+      color: #9A8A7C;
+    }
+
+    /* Bilhete Reservado: Amarelo Manteiga */
+    .ticket-card.reservado {
+      background: #FFF9C4;
+      border: 2.5px solid var(--stroke-dark);
+    }
+    .ticket-card.reservado .ticket-num {
+      color: #665012;
+    }
+    .ticket-card.reservado .ticket-sub {
+      color: #665012;
+      font-weight: 700;
+    }
+
+    /* Bilhete Pago: Verde Menta Doce */
+    .ticket-card.pago {
+      background: #E8F5E9;
+      border: 2.5px solid var(--stroke-dark);
+    }
+    .ticket-card.pago .ticket-num {
+      color: #235418;
+    }
+    .ticket-card.pago .ticket-sub {
+      color: #235418;
+      font-weight: 700;
+    }
+
+    .ticket-num {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .ticket-sub {
+      font-size: 0.72rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 92%;
+      text-align: center;
+    }
+
+    /* =========================================
+       5. MODAIS & RODAPÉ COM DÁLMATA
+       ========================================= */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(44, 33, 27, 0.45);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      animation: fadeIn 0.18s ease;
+    }
+
+    .modal-box {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      border: 4px solid var(--stroke-dark);
+      border-radius: 28px;
+      box-shadow: 0 14px 0 rgba(44, 33, 27, 0.3);
+      width: 92%;
+      max-width: 430px;
+      padding: 26px;
+      z-index: 1001;
+      animation: popIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 2px dashed rgba(44, 33, 27, 0.2);
+      padding-bottom: 12px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--stroke-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-close-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2.5px solid var(--stroke-dark);
+      background: var(--color-pink);
+      color: var(--stroke-dark);
+      font-size: 1.15rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      transition: var(--trans-bouncy);
+    }
+    .btn-close-circle:hover { transform: scale(1.1) rotate(8deg); }
+
+    /* Detalhes do Número Ocupado */
+    .details-box {
+      background: #FFFDF8;
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 3px 0 var(--stroke-dark);
+    }
+
+    .details-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.92rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Formulário */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--stroke-dark);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 14px;
+      background: var(--bg-white);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--stroke-dark);
+      outline: none;
+      box-shadow: inset 0 2px 4px rgba(44, 33, 27, 0.06);
+    }
+    .form-input:focus {
+      border-color: var(--color-orange);
+    }
+
+    .status-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .status-opt-btn {
+      padding: 10px;
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 14px;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--bg-white);
+      color: var(--stroke-dark);
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      transition: var(--trans-bouncy);
+    }
+    .status-opt-btn.active.pago { background: var(--color-green); color: #fff; }
+    .status-opt-btn.active.reservado { background: var(--color-yellow); color: var(--stroke-dark); }
+
+    /* Rodapé com Mascote Dálmata */
+    .footer-bar {
+      margin-top: 24px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: #6C5547;
+    }
+
+    .footer-dog {
+      width: 44px;
+      height: 52px;
+      flex-shrink: 0;
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes gentleWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-1.8deg); }
+      75% { transform: rotate(1.8deg); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes popIn {
+      from { transform: translate(-50%, -46%) scale(0.92); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .header-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 20px 16px;
+      }
+      .seal-wrap { margin: 0 auto; }
+      .header-mascot { display: none; }
+      .header-badges { justify-content: center; }
+      .toolbar-nav { flex-direction: column; align-items: stretch; }
+      .centenas-tabs, .status-tabs { justify-content: center; }
+      .rifa-grid { grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); gap: 6px; }
+      .ticket-card { height: 64px; }
+      .ticket-num { font-size: 1.4rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <h1>👔 Rifa Dia dos Pais</h1>
-    <p class="subtitulo">Projeto Escolar - Registro em Tempo Real</p>
-    <p class="data-limite">Sorteio válido até: 09 de Agosto</p>
+  <div class="app-container">
 
-    <div class="stats">Números Vendidos: <span id="contador">0</span> / 200</div>
+    <!-- =========================================
+         1. CABEÇALHO ILUSTRADO (BOBBIE GOODS)
+         ========================================= -->
+    <header class="header-card">
+      <!-- Selo Circular Bobbie Goods Stamp -->
+      <div class="seal-wrap" title="Selo Oficial do Gerenciador">
+        <svg viewBox="0 0 200 200" width="100%" height="100%" fill="none">
+          <defs>
+            <path id="sealTop" d="M 28,100 A 72,72 0 1,1 172,100" />
+            <path id="sealBottom" d="M 172,100 A 72,72 0 0,1 28,100" />
+          </defs>
+          <circle cx="100" cy="100" r="94" fill="#FFFDF7" stroke="#2C211B" stroke-width="5" />
+          <circle cx="100" cy="100" r="84" stroke="#2C211B" stroke-width="2" stroke-dasharray="4,4" />
+          <text fill="#2C211B" font-family="'Gaegu', cursive" font-weight="700" font-size="20" letter-spacing="3.5">
+            <textPath href="#sealTop" startOffset="50%" text-anchor="middle">RIFA ESCOLAR</textPath>
+          </text>
+          <text fill="#2C211B" font-family="'Gaegu', cursive" font-weight="700" font-size="14" letter-spacing="2">
+            <textPath href="#sealBottom" startOffset="50%" text-anchor="middle">★ GERENCIADOR ★</textPath>
+          </text>
+          <g transform="translate(100, 100)">
+            <circle cx="-25" cy="-22" r="11" fill="#FFFDF7" stroke="#2C211B" stroke-width="3.5" />
+            <circle cx="25" cy="-22" r="11" fill="#FFFDF7" stroke="#2C211B" stroke-width="3.5" />
+            <circle cx="0" cy="0" r="32" fill="#FFFDF7" stroke="#2C211B" stroke-width="4" />
+            <ellipse cx="-16" cy="7" rx="5" ry="3.5" fill="#F7BAC6" opacity="0.85" />
+            <ellipse cx="16" cy="7" rx="5" ry="3.5" fill="#F7BAC6" opacity="0.85" />
+            <circle cx="-10" cy="-3" r="2.8" fill="#2C211B" />
+            <circle cx="10" cy="-3" r="2.8" fill="#2C211B" />
+            <ellipse cx="0" cy="4" rx="4.5" ry="3.2" fill="#2C211B" />
+            <path d="M 0,7.2 L 0,9.5 M -4.5,10 Q 0,14 0,9.5 Q 0,14 4.5,10" fill="none" stroke="#2C211B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <text x="25" y="-6" font-family="'Fredoka', sans-serif" font-size="8" font-weight="700" fill="#2C211B">TM</text>
+          </g>
+        </svg>
+      </div>
 
-    <div class="rifa-container" id="rifa">Carregando rifa...</div>
-
-    <div id="overlay" onclick="fechar()"></div>
-    <div id="modal">
-        <h3 id="modal-titulo" style="margin-top:0"></h3>
-        <div id="form-compra">
-            <input type="text" id="nome" placeholder="Nome do Comprador">
-            <input type="tel" id="telefone" placeholder="Telefone (WhatsApp)">
-            <input type="text" id="aluno" placeholder="Nome do Aluno">
-            <div class="btn-group">
-                <button class="btn-save" onclick="salvar()">Confirmar Reserva</button>
-                <button class="btn-close" onclick="fechar()">Cancelar</button>
-            </div>
+      <!-- Informações Principais & Badges -->
+      <div class="header-info">
+        <div class="header-badges">
+          <span class="badge-pill badge-date">📅 Sorteio: 09 de Outubro</span>
+          <span class="badge-pill badge-target">🎟️ 300 Números</span>
+          <span class="badge-pill badge-admin">🔒 Painel Interno</span>
         </div>
-        <div id="info-pago" style="display:none;">
-            <p id="detalhes-cliente" style="line-height: 1.5"></p>
-            <div class="btn-group">
-                <button class="btn-delete" onclick="apagar()">Apagar Registro</button>
-                <button class="btn-close" onclick="fechar()">Fechar</button>
-            </div>
+        <h1 class="header-title">Caderno da Rifa Escolar</h1>
+        <p class="header-sub">Gerenciador em tempo real dos organizadores • Apoiando nossas crianças com amor 🧸🌸</p>
+      </div>
+
+      <!-- Mascote Ursinho com Bucket Hat & Botinhas Azuis -->
+      <div class="header-mascot" title="Ursinho Bobbie Goods!">
+        <svg viewBox="0 0 220 250" width="100%" height="100%" fill="none">
+          <ellipse cx="110" cy="236" rx="65" ry="10" fill="#2C211B" opacity="0.12" />
+          <circle cx="68" cy="80" r="19" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="68" cy="80" r="10" fill="#F3D2A2" />
+          <circle cx="152" cy="80" r="19" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="152" cy="80" r="10" fill="#F3D2A2" />
+          <path d="M 74,142 C 55,168 56,212 110,214 C 164,212 165,168 146,142 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <ellipse cx="110" cy="182" rx="30" ry="24" fill="#F3D2A2" />
+          <path d="M 72,148 C 50,158 54,185 75,182 C 84,180 82,158 72,148 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 148,148 C 170,158 166,185 145,182 C 136,180 138,158 148,148 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Botinhas Azuis -->
+          <g>
+            <path d="M 75,198 C 65,198 56,206 56,218 C 56,230 76,231 92,231 C 101,231 102,218 97,208 C 93,200 87,198 75,198 Z" fill="#B6DAFA" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+            <ellipse cx="85" cy="200" rx="12" ry="5" fill="#9ACBF7" stroke="#2C211B" stroke-width="3" />
+          </g>
+          <g>
+            <path d="M 145,198 C 155,198 164,206 164,218 C 164,230 144,231 128,231 C 119,231 118,218 123,208 C 127,200 133,198 145,198 Z" fill="#B6DAFA" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+            <ellipse cx="135" cy="200" rx="12" ry="5" fill="#9ACBF7" stroke="#2C211B" stroke-width="3" />
+          </g>
+          <!-- Cabeça -->
+          <path d="M 58,105 C 46,134 56,158 110,160 C 164,158 174,134 162,105 C 152,78 68,78 58,105 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <ellipse cx="78" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
+          <ellipse cx="142" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
+          <ellipse cx="110" cy="128" rx="16" ry="12" fill="#F3D2A2" />
+          <path d="M 104,124 C 104,120 116,120 116,124 C 116,128 110,130 104,124 Z" fill="#2C211B" />
+          <path d="M 110,128 L 110,132 M 103,133 Q 110,139 110,132 Q 110,139 117,133" fill="none" stroke="#2C211B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          <ellipse cx="91" cy="118" rx="3.8" ry="4.5" fill="#2C211B" />
+          <ellipse cx="129" cy="118" rx="3.8" ry="4.5" fill="#2C211B" />
+          <circle cx="92.5" cy="116.5" r="1.2" fill="#FFFDF7" />
+          <circle cx="130.5" cy="116.5" r="1.2" fill="#FFFDF7" />
+          <!-- Bucket Hat Amarelo -->
+          <path d="M 72,78 C 70,42 86,30 110,30 C 134,30 150,42 148,78 Z" fill="#FEE47A" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 70,72 C 84,68 136,68 150,72 L 149,78 C 135,74 85,74 71,78 Z" fill="#E4AF38" stroke="#2C211B" stroke-width="3" stroke-linejoin="round" />
+          <path d="M 48,82 C 62,70 158,70 172,82 C 176,95 154,101 110,101 C 66,101 44,95 48,82 Z" fill="#FEE47A" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </header>
+
+    <!-- =========================================
+         2. PAINEL DE MÉTRICAS ILUSTRADO (CARDS COM ADESIVOS)
+         ========================================= -->
+    <div class="metrics-bar">
+      <!-- Pagos -->
+      <div class="metric-card">
+        <div class="metric-icon sold">🌸</div>
+        <div class="metric-content">
+          <span class="metric-label">Pagos / Vendidos</span>
+          <span class="metric-value"><span id="count-pagos">0</span> / 300</span>
         </div>
+      </div>
+
+      <!-- Disponíveis -->
+      <div class="metric-card">
+        <div class="metric-icon avail">🍀</div>
+        <div class="metric-content">
+          <span class="metric-label">Disponíveis</span>
+          <span class="metric-value" id="count-disponiveis">300</span>
+        </div>
+      </div>
+
+      <!-- Arrecadação Estimada com Preço Editável -->
+      <div class="metric-card" style="position:relative; cursor:pointer;" onclick="abrirModalPreco()" title="Clique para alterar o valor do bilhete">
+        <div class="metric-icon money">🍯</div>
+        <div class="metric-content" style="flex:1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:4px;">
+            <span class="metric-label">Arrecadação</span>
+            <span style="font-size:0.75rem; color:#6C5547; font-weight:700; background:#EFE4D6; padding:1px 6px; border-radius:6px; border:1px solid var(--stroke-dark);" title="Preço unitário">
+              R$ <span id="label-preco-unitario">10,00</span> ✏️
+            </span>
+          </div>
+          <span class="metric-value" id="total-arrecadado">R$ 0,00</span>
+        </div>
+      </div>
     </div>
 
-    <!-- SDK do Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- =========================================
+         3. FERRAMENTAS DO GERENCIADOR (BOTÕES TÁTEIS)
+         ========================================= -->
+    <section class="toolbar-card">
+      <div class="toolbar-top">
+        <!-- Campo de Busca Instantânea -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="campo-busca" class="search-input" placeholder="Buscar por número (ex: 42), comprador ou aluno..." oninput="filtrarRifas()">
+          <span class="search-shortcut">/</span>
+        </div>
 
-        // Suas credenciais aplicadas
-        const firebaseConfig = {
-            apiKey: "AIzaSyA8p_-E1qf1I-5q2W-oL2rhRqWFQckMKSA",
-            authDomain: "rifa-dia-dos-namorados-a6c46.firebaseapp.com",
-            projectId: "rifa-dia-dos-namorados-a6c46",
-            storageBucket: "rifa-dia-dos-namorados-a6c46.firebasestorage.app",
-            messagingSenderId: "222551804426",
-            appId: "1:222551804426:web:8b7ba72dd2a2fd680dedf3",
-            measurementId: "G-123KHW6RSL"
-        };
+        <!-- Botões de Ação do Gerenciador -->
+        <div class="tools-btn-group">
+          <button class="btn-chunky pink" onclick="abrirModalRanking()">
+            🏆 Top Alunos
+          </button>
+          <button class="btn-chunky" onclick="copiarRelatorio()">
+            📋 Copiar Lista
+          </button>
+        </div>
+      </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+      <!-- Navegação por Centenas e Filtros de Estado -->
+      <div class="toolbar-nav">
+        <!-- Abas por Centenas -->
+        <div class="centenas-tabs">
+          <button class="tab-pill active" data-centena="todos" onclick="mudarCentena('todos')">Todos (300)</button>
+          <button class="tab-pill" data-centena="c1" onclick="mudarCentena('c1')">001 – 100</button>
+          <button class="tab-pill" data-centena="c2" onclick="mudarCentena('c2')">101 – 200</button>
+          <button class="tab-pill" data-centena="c3" onclick="mudarCentena('c3')">201 – 300</button>
+        </div>
 
-        const totalNumeros = 200;
-        let selecionado = null;
-        let dadosLocais = {};
+        <!-- Filtros Rápidos por Status -->
+        <div class="status-tabs">
+          <button class="status-pill active" data-status="todos" onclick="mudarStatus('todos')">Todos</button>
+          <button class="status-pill" data-status="disponivel" onclick="mudarStatus('disponivel')">⚪ Disponíveis</button>
+          <button class="status-pill" data-status="pago" onclick="mudarStatus('pago')">🟢 Pagos</button>
+        </div>
+      </div>
+    </section>
 
-        // Sincronização em tempo real
-        onSnapshot(collection(db, "vendas"), (snapshot) => {
-            dadosLocais = {};
-            snapshot.forEach((doc) => {
-                dadosLocais[doc.id] = doc.data();
-            });
-            desenharRifa();
+    <!-- =========================================
+         4. GRADE DAS 300 RIFAS (ESTILO BILHETE DE DESENHO)
+         ========================================= -->
+    <main class="rifa-wrapper">
+      <div class="grid-meta-bar">
+        <span>🎟️ Cartela de Bilhetes</span>
+        <span id="label-exibindo">Exibindo 300 bilhetes</span>
+      </div>
+      
+      <!-- Grade Dinâmica Gerada por JavaScript -->
+      <div class="rifa-grid" id="rifa-grid">
+        <!-- Bilhetes serão renderizados aqui -->
+      </div>
+    </main>
+
+    <!-- =========================================
+         RODAPÉ COM MASCOTE DÁLMATA
+         ========================================= -->
+    <footer class="footer-bar">
+      <!-- Cachorrinho Dálmata SVG com caixinha de suco -->
+      <div class="footer-dog" title="Dálmata Bobbie Goods!">
+        <svg viewBox="0 0 220 250" width="100%" height="100%" fill="none">
+          <ellipse cx="110" cy="236" rx="65" ry="10" fill="#2C211B" opacity="0.12" />
+          <path d="M 64,74 C 42,80 30,115 36,142 C 42,160 58,155 64,136 C 68,118 68,90 64,74 Z" fill="#7F4E31" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 156,74 C 178,80 190,115 184,142 C 178,160 162,155 156,136 C 152,118 152,90 156,74 Z" fill="#7F4E31" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 72,142 C 54,170 56,212 110,214 C 164,212 166,170 148,142 Z" fill="#FFFDF5" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <ellipse cx="68" cy="174" rx="9" ry="13" fill="#7F4E31" transform="rotate(-18 68 174)" />
+          <ellipse cx="150" cy="178" rx="8" ry="11" fill="#7F4E31" transform="rotate(22 150 178)" />
+          <path d="M 64,88 C 50,118 60,154 110,156 C 160,154 170,118 156,88 C 146,58 74,58 64,88 Z" fill="#FFFDF5" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 130,92 C 120,92 116,104 116,116 C 116,130 130,136 142,132 C 154,128 156,106 146,96 C 140,90 134,92 130,92 Z" fill="#7F4E31" />
+          <path d="M 85,68 C 80,63 90,56 97,61 C 103,66 98,78 89,75 Z" fill="#7F4E31" />
+          <ellipse cx="80" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
+          <ellipse cx="140" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
+          <ellipse cx="91" cy="114" rx="3.6" ry="4.5" fill="#2C211B" />
+          <ellipse cx="131" cy="114" rx="3.6" ry="4.5" fill="#2C211B" />
+          <circle cx="92.2" cy="112.5" r="1.2" fill="#FFFDF7" />
+          <circle cx="132.2" cy="112.5" r="1.2" fill="#FFFDF7" />
+          <ellipse cx="111" cy="122" rx="6" ry="4.5" fill="#2C211B" />
+          <path d="M 111,126.5 L 111,130 M 104,131 Q 111,137 111,130 Q 111,137 118,131" fill="none" stroke="#2C211B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Suquinho de Laranja -->
+          <rect x="94" y="162" width="34" height="46" rx="6" fill="#F89D42" stroke="#2C211B" stroke-width="4" />
+          <rect x="94" y="176" width="34" height="16" fill="#FEE47A" />
+          <circle cx="111" cy="184" r="5" fill="#F89D42" />
+          <path d="M 108,162 L 108,144 L 111,130" fill="none" stroke="#2C211B" stroke-width="7" stroke-linecap="round" />
+          <path d="M 108,162 L 108,144 L 111,130" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" />
+        </svg>
+      </div>
+      <span>Rifa Escolar • Sorteio Oficial em <strong>09 de Outubro</strong> • Feito para os Organizadores</span>
+    </footer>
+
+  </div>
+
+  <!-- =========================================
+       MODAL: GERENCIAR / RESERVAR BILHETE
+       ========================================= -->
+  <div id="modal-overlay" class="modal-overlay" onclick="fecharModal()"></div>
+
+  <div id="modal-bilhete" class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>🎟️</span>
+        <span id="modal-num-titulo">Bilhete #001</span>
+      </div>
+      <button class="btn-close-circle" onclick="fecharModal()">✕</button>
+    </div>
+
+    <!-- MODO 1: DETALHES DE NÚMERO JÁ OCUPADO -->
+    <div id="view-detalhes" style="display:none;">
+      <div class="details-box">
+        <div class="details-row">
+          <span>Status Atual:</span>
+          <span id="det-status-badge" class="badge-pill badge-date">Pago</span>
+        </div>
+        <div class="details-row">
+          <span>👤 Comprador:</span>
+          <strong id="det-nome">--</strong>
+        </div>
+        <div class="details-row">
+          <span>📱 WhatsApp:</span>
+          <strong id="det-telefone">--</strong>
+        </div>
+        <div class="details-row">
+          <span>🎒 Aluno Indicador:</span>
+          <strong id="det-aluno">--</strong>
+        </div>
+        <div class="details-row" style="font-size:0.8rem; color:#7F5E48;">
+          <span>Registrado em:</span>
+          <span id="det-data">--</span>
+        </div>
+      </div>
+
+      <!-- Ações Operacionais -->
+      <div class="modal-actions">
+        <button id="btn-whatsapp" class="btn-chunky" style="background:var(--color-green); color:#fff;" onclick="dispararWhatsApp()">
+          📲 Abrir Confirmação no WhatsApp
+        </button>
+        <button class="btn-chunky" onclick="habilitarEdicao()">
+          ✏️ Editar Dados do Comprador
+        </button>
+        <button id="btn-liberar" class="btn-chunky pink" onclick="confirmarLiberacao()">
+          🗑️ Liberar Bilhete
+        </button>
+      </div>
+    </div>
+
+    <!-- MODO 2: FORMULÁRIO DE CADASTRO / EDIÇÃO -->
+    <div id="view-formulario">
+      <div class="form-group">
+        <label class="form-label" for="inp-nome">👤 Nome do Comprador:</label>
+        <input type="text" id="inp-nome" class="form-input" placeholder="Ex: Lucas Silva" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inp-telefone">📱 Telefone / WhatsApp:</label>
+        <input type="tel" id="inp-telefone" class="form-input" placeholder="Ex: (11) 98765-4321" oninput="mascaraTelefone(this)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="inp-aluno">🎒 Nome do Aluno Indicador:</label>
+        <input type="text" id="inp-aluno" class="form-input" placeholder="Ex: Rafaela Santos">
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn-chunky" style="background:var(--color-green); color:#fff;" onclick="salvarBilhete()">
+          💾 Salvar Bilhete
+        </button>
+        <button class="btn-chunky" onclick="fecharModal()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODAL: RANKING DOS ALUNOS
+       ========================================= -->
+  <div id="modal-ranking" class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>🏆</span>
+        <span>Top Alunos</span>
+      </div>
+      <button class="btn-close-circle" onclick="fecharModalRanking()">✕</button>
+    </div>
+    <div id="ranking-lista" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+      <!-- Lista do ranking -->
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-chunky blue" onclick="copiarRanking()">
+        📋 Copiar Ranking
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODAL: CONFERÊNCIA DO SORTEIO (09 DE OUTUBRO)
+       ========================================= -->
+  <div id="modal-sorteio" class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>🎯</span>
+        <span>Sorteio: 09 de Outubro</span>
+      </div>
+      <button class="btn-close-circle" onclick="fecharModalSorteio()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="inp-num-sorteado">Digite o Número Sorteado (1 a 300):</label>
+      <input type="number" id="inp-num-sorteado" class="form-input" min="1" max="300" placeholder="Ex: 142" oninput="conferirGanhador()">
+    </div>
+
+    <div id="card-ganhador" style="display:none; margin-top:14px;">
+      <div class="details-box" style="background:#FFF3E0; border-color:var(--color-orange); text-align:center;">
+        <div style="font-family:var(--font-display); font-size:2.4rem; color:var(--color-red);">🎉 PARABÉNS! 🎉</div>
+        <div style="font-size:1.1rem; font-weight:700; margin:6px 0;" id="sorteio-vencedor-nome">--</div>
+        <div style="font-size:0.95rem;" id="sorteio-vencedor-tel">--</div>
+        <div style="font-size:0.95rem; color:#6C5547;" id="sorteio-vencedor-aluno">--</div>
+        <div style="margin-top:10px;">
+          <button id="btn-whats-ganhador" class="btn-chunky" style="background:var(--color-green); color:#fff; width:100%;">
+            📲 Parabenizar no WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================
+       MODAL: EDITAR VALOR DO BILHETE (PERSISTENTE)
+       ========================================= -->
+  <div id="modal-preco" class="modal-box" style="max-width:340px;">
+    <div class="modal-header">
+      <div class="modal-title" style="font-size:1.8rem;">
+        <span>🍯</span>
+        <span>Valor do Bilhete</span>
+      </div>
+      <button class="btn-close-circle" onclick="fecharModalPreco()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="inp-preco-unitario">Novo Preço por Número (R$):</label>
+      <input type="number" id="inp-preco-unitario" class="form-input" min="0" step="0.5" placeholder="10.00" onkeydown="if(event.key==='Enter') salvarPrecoBilhete()">
+    </div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-chunky" style="background:var(--color-green); color:#fff;" onclick="salvarPrecoBilhete()">
+        💾 Salvar Preço
+      </button>
+      <button class="btn-chunky" onclick="fecharModalPreco()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================
+       JAVASCRIPT / FIREBASE REAL-TIME
+       ========================================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Suas credenciais aplicadas
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8p_-E1qf1I-5q2W-oL2rhRqWFQckMKSA",
+      authDomain: "rifa-dia-dos-namorados-a6c46.firebaseapp.com",
+      projectId: "rifa-dia-dos-namorados-a6c46",
+      storageBucket: "rifa-dia-dos-namorados-a6c46.firebasestorage.app",
+      messagingSenderId: "222551804426",
+      appId: "1:222551804426:web:8b7ba72dd2a2fd680dedf3",
+      measurementId: "G-123KHW6RSL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const TOTAL_NUMEROS = 300;
+    let precoBilhete = parseFloat(localStorage.getItem('preco_bilhete_rifa')) || 10;
+    let bilheteSelecionado = null;
+    let dadosLocais = {};
+    let centenaAtiva = 'todos';
+    let statusAtivo = 'todos';
+    let estadoFormSelecionado = 'pago';
+    let confirmacaoLiberarPendente = false;
+
+    // Sincronização em tempo real das configurações (Preço da Rifa persistente)
+    onSnapshot(doc(db, "configuracoes", "rifa"), (docSnap) => {
+      if (docSnap.exists()) {
+        const dadosConfig = docSnap.data();
+        if (dadosConfig.precoBilhete !== undefined && !isNaN(dadosConfig.precoBilhete)) {
+          precoBilhete = parseFloat(dadosConfig.precoBilhete);
+          localStorage.setItem('preco_bilhete_rifa', precoBilhete.toString());
+          atualizarExibicaoPreco();
+          atualizarMetricas();
+        }
+      }
+    }, (erro) => {
+      console.warn("Configurações Firestore: usando fallback local:", erro);
+    });
+
+    function atualizarExibicaoPreco() {
+      const el = document.getElementById('label-preco-unitario');
+      if (el) {
+        el.innerText = precoBilhete.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+    }
+
+    // Inicialização da exibição do preço
+    atualizarExibicaoPreco();
+
+    // Sincronização em tempo real
+    onSnapshot(collection(db, "vendas"), (snapshot) => {
+      dadosLocais = {};
+      snapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        if (!item.status) item.status = 'pago';
+        dadosLocais[docSnap.id] = item;
+      });
+      atualizarMetricas();
+      renderizarGrade();
+    }, (erro) => {
+      console.error("Erro ao sincronizar Firestore:", erro);
+      alert("Aviso de conexão com o banco de dados: " + erro.message);
+    });
+
+    function atualizarMetricas() {
+      let pagos = 0;
+
+      for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+        const d = dadosLocais[i];
+        if (d) {
+          pagos++;
+        }
+      }
+
+      const disponiveis = TOTAL_NUMEROS - pagos;
+      const totalArrecadado = pagos * precoBilhete;
+
+      document.getElementById('count-pagos').innerText = pagos;
+      document.getElementById('count-disponiveis').innerText = disponiveis;
+      document.getElementById('total-arrecadado').innerText = totalArrecadado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Renderização dos Bilhetes com Estética Drawing + Miolo Limpo
+    window.renderizarGrade = function() {
+      const container = document.getElementById('rifa-grid');
+      container.innerHTML = '';
+
+      const termoBusca = (document.getElementById('campo-busca').value || '').trim().toLowerCase();
+      let exibidos = 0;
+
+      let minNum = 1;
+      let maxNum = TOTAL_NUMEROS;
+
+      if (centenaAtiva === 'c1') { minNum = 1; maxNum = 100; }
+      else if (centenaAtiva === 'c2') { minNum = 101; maxNum = 200; }
+      else if (centenaAtiva === 'c3') { minNum = 201; maxNum = 300; }
+
+      for (let i = minNum; i <= maxNum; i++) {
+        const dado = dadosLocais[i];
+        const status = dado ? 'pago' : 'disponivel';
+
+        if (statusAtivo !== 'todos' && status !== statusAtivo) continue;
+
+        let coincideBusca = true;
+        if (termoBusca) {
+          const numStr = i.toString();
+          const numFormatado = i.toString().padStart(3, '0');
+          const nome = (dado && dado.nome) ? dado.nome.toLowerCase() : '';
+          const tel = (dado && dado.telefone) ? dado.telefone.toLowerCase() : '';
+          const aluno = (dado && dado.aluno) ? dado.aluno.toLowerCase() : '';
+
+          coincideBusca = numStr.includes(termoBusca) ||
+                          numFormatado.includes(termoBusca) ||
+                          nome.includes(termoBusca) ||
+                          tel.includes(termoBusca) ||
+                          aluno.includes(termoBusca);
+        }
+
+        const card = document.createElement('div');
+        card.className = `ticket-card ${status}` + (!coincideBusca ? ' faded' : '');
+        
+        const numFormatado = i.toString().padStart(3, '0');
+        const subTexto = (status === 'pago') ? (dado.nome ? dado.nome.split(' ')[0] : 'Pago') : 'Livre';
+
+        // Estética Drawing autêntica: Número expressivo + 1 linha de texto limpa
+        card.innerHTML = `
+          <div class="ticket-num">${numFormatado}</div>
+          <div class="ticket-sub" title="${dado ? (dado.nome + ' (Aluno: ' + (dado.aluno || '-') + ')') : 'Disponível'}">${subTexto}</div>
+        `;
+
+        card.onclick = () => abrirModalBilhete(i);
+        container.appendChild(card);
+        exibidos++;
+      }
+
+      document.getElementById('label-exibindo').innerText = `Exibindo ${exibidos} de ${TOTAL_NUMEROS} bilhetes`;
+    };
+
+    window.mudarCentena = function(centena) {
+      centenaAtiva = centena;
+      document.querySelectorAll('.centenas-tabs .tab-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.centena === centena);
+      });
+      renderizarGrade();
+    };
+
+    window.mudarStatus = function(st) {
+      statusAtivo = st;
+      document.querySelectorAll('.status-tabs .status-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.status === st);
+      });
+      renderizarGrade();
+    };
+
+    window.filtrarRifas = function() {
+      renderizarGrade();
+    };
+
+    // Modal de Gestão do Bilhete
+    window.abrirModalBilhete = function(num) {
+      bilheteSelecionado = num;
+      confirmacaoLiberarPendente = false;
+      const numFormatado = num.toString().padStart(3, '0');
+      document.getElementById('modal-num-titulo').innerText = `Bilhete #${numFormatado}`;
+
+      const dado = dadosLocais[num];
+
+      if (dado) {
+        document.getElementById('view-detalhes').style.display = 'block';
+        document.getElementById('view-formulario').style.display = 'none';
+
+        const badge = document.getElementById('det-status-badge');
+        badge.innerText = '🟢 Confirmado';
+        badge.style.background = 'var(--color-green)';
+        badge.style.color = '#fff';
+
+        document.getElementById('det-nome').innerText = dado.nome || '-';
+        document.getElementById('det-telefone').innerText = dado.telefone || '-';
+        document.getElementById('det-aluno').innerText = dado.aluno || 'Não informado';
+        
+        let dataStr = '--';
+        if (dado.data) {
+          try { dataStr = new Date(dado.data).toLocaleString('pt-BR'); }
+          catch(e) { dataStr = dado.data; }
+        }
+        document.getElementById('det-data').innerText = dataStr;
+
+        document.getElementById('btn-liberar').innerText = '🗑️ Liberar Bilhete';
+      } else {
+        document.getElementById('view-detalhes').style.display = 'none';
+        document.getElementById('view-formulario').style.display = 'block';
+
+        document.getElementById('inp-nome').value = '';
+        document.getElementById('inp-telefone').value = '';
+        document.getElementById('inp-aluno').value = '';
+        setTimeout(() => document.getElementById('inp-nome').focus(), 150);
+      }
+
+      document.getElementById('modal-overlay').style.display = 'block';
+      document.getElementById('modal-bilhete').style.display = 'block';
+    };
+
+    window.habilitarEdicao = function() {
+      const dado = dadosLocais[bilheteSelecionado];
+      if (!dado) return;
+
+      document.getElementById('view-detalhes').style.display = 'none';
+      document.getElementById('view-formulario').style.display = 'block';
+
+      document.getElementById('inp-nome').value = dado.nome || '';
+      document.getElementById('inp-telefone').value = dado.telefone || '';
+      document.getElementById('inp-aluno').value = dado.aluno || '';
+    };
+
+    window.salvarBilhete = async function() {
+      const n = document.getElementById('inp-nome').value.trim();
+      const t = document.getElementById('inp-telefone').value.trim();
+      const a = document.getElementById('inp-aluno').value.trim();
+
+      if (!n || !t || !a) {
+        alert("Por favor, preencha o Nome do Comprador, Telefone e o Aluno!");
+        return;
+      }
+
+      try {
+        await setDoc(doc(db, "vendas", bilheteSelecionado.toString()), {
+          nome: n,
+          telefone: t,
+          aluno: a,
+          status: 'pago',
+          data: new Date().toISOString()
         });
+        fecharModal();
+      } catch (e) {
+        alert("Erro ao salvar no Firestore: " + e.message);
+      }
+    };
 
-        window.desenharRifa = function() {
-            const container = document.getElementById('rifa');
-            container.innerHTML = '';
-            let vendidos = 0;
+    window.alternarStatus = async function() {
+      const dado = dadosLocais[bilheteSelecionado];
+      if (!dado) return;
 
-            for (let i = 1; i <= totalNumeros; i++) {
-                const div = document.createElement('div');
-                div.className = 'numero' + (dadosLocais[i] ? ' pago' : '');
-                div.innerText = i;
-                div.onclick = () => abrirModal(i);
-                container.appendChild(div);
-                if (dadosLocais[i]) vendidos++;
-            }
-            document.getElementById('contador').innerText = vendidos;
+      const novoStatus = (dado.status === 'reservado') ? 'pago' : 'reservado';
+
+      try {
+        await setDoc(doc(db, "vendas", bilheteSelecionado.toString()), {
+          ...dado,
+          status: novoStatus,
+          dataAtualizacao: new Date().toISOString()
+        });
+        abrirModalBilhete(bilheteSelecionado);
+      } catch (e) {
+        alert("Erro ao alternar status: " + e.message);
+      }
+    };
+
+    window.confirmarLiberacao = async function() {
+      const btn = document.getElementById('btn-liberar');
+      if (!confirmacaoLiberarPendente) {
+        confirmacaoLiberarPendente = true;
+        btn.innerText = '⚠️ Tem certeza? Clique p/ Confirmar';
+        btn.style.background = 'var(--color-red)';
+        return;
+      }
+
+      try {
+        await deleteDoc(doc(db, "vendas", bilheteSelecionado.toString()));
+        fecharModal();
+      } catch (e) {
+        alert("Erro ao liberar bilhete: " + e.message);
+      }
+    };
+
+    window.dispararWhatsApp = function() {
+      const dado = dadosLocais[bilheteSelecionado];
+      if (!dado) return;
+
+      const telSanitizado = (dado.telefone || '').replace(/\D/g, '');
+      const numFormatado = bilheteSelecionado.toString().padStart(3, '0');
+      const primeiroNome = (dado.nome || 'Amigo(a)').split(' ')[0];
+      const nomeAluno = dado.aluno || 'nossa turma';
+
+      const mensagem = `Olá, *${primeiroNome}*! 🧸🍀\n\nConfirmamos com carinho o seu bilhete *#${numFormatado}* da nossa *Rifa Escolar* apoiando o(a) aluno(a) *${nomeAluno}*! 🎒\n\n📅 *Data do Sorteio:* 09 de Outubro\n\nMuito obrigado pelo apoio e boa sorte! Estamos na torcida! ✨🎉`;
+
+      const url = `https://wa.me/55${telSanitizado}?text=${encodeURIComponent(mensagem)}`;
+      window.open(url, '_blank');
+    };
+
+    window.fecharModal = function() {
+      document.getElementById('modal-overlay').style.display = 'none';
+      document.getElementById('modal-bilhete').style.display = 'none';
+      document.getElementById('modal-ranking').style.display = 'none';
+      document.getElementById('modal-sorteio').style.display = 'none';
+      document.getElementById('modal-preco').style.display = 'none';
+      confirmacaoLiberarPendente = false;
+    };
+
+    // Modal de Edição do Preço do Bilhete (Persistente no Firestore e LocalStorage)
+    window.abrirModalPreco = function() {
+      const inp = document.getElementById('inp-preco-unitario');
+      inp.value = precoBilhete;
+      document.getElementById('modal-overlay').style.display = 'block';
+      document.getElementById('modal-preco').style.display = 'block';
+      setTimeout(() => {
+        inp.focus();
+        inp.select();
+      }, 100);
+    };
+
+    window.fecharModalPreco = function() {
+      document.getElementById('modal-preco').style.display = 'none';
+      document.getElementById('modal-overlay').style.display = 'none';
+    };
+
+    window.salvarPrecoBilhete = async function() {
+      const val = parseFloat(document.getElementById('inp-preco-unitario').value);
+      if (isNaN(val) || val < 0) {
+        alert("Por favor, digite um valor válido para o bilhete!");
+        return;
+      }
+      precoBilhete = val;
+      localStorage.setItem('preco_bilhete_rifa', precoBilhete.toString());
+      atualizarExibicaoPreco();
+      atualizarMetricas();
+      fecharModalPreco();
+
+      try {
+        await setDoc(doc(db, "configuracoes", "rifa"), {
+          precoBilhete: val,
+          atualizadoEm: new Date().toISOString()
+        }, { merge: true });
+      } catch (e) {
+        console.error("Erro ao sincronizar preço com Firestore:", e);
+      }
+    };
+
+    // Ranking dos Alunos
+    window.abrirModalRanking = function() {
+      const rankingMap = {};
+
+      for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+        const d = dadosLocais[i];
+        if (d && d.aluno) {
+          const alunoKey = d.aluno.trim();
+          rankingMap[alunoKey] = (rankingMap[alunoKey] || 0) + 1;
         }
+      }
 
-        window.abrirModal = function(num) {
-            selecionado = num;
-            document.getElementById('modal-titulo').innerText = "Número " + num;
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+      const lista = Object.entries(rankingMap).map(([nome, qtd]) => ({ nome, qtd })).sort((a, b) => b.qtd - a.qtd);
+      const container = document.getElementById('ranking-lista');
+      container.innerHTML = '';
 
-            if (dadosLocais[num]) {
-                document.getElementById('form-compra').style.display = 'none';
-                document.getElementById('info-pago').style.display = 'block';
-                document.getElementById('detalhes-cliente').innerHTML = 
-                    `<strong>👤 Comprador:</strong> ${dadosLocais[num].nome}<br>` +
-                    `<strong>📱 Tel:</strong> ${dadosLocais[num].telefone}<br>` +
-                    `<strong>🎓 Aluno:</strong> ${dadosLocais[num].aluno || 'Não informado'}`;
-            } else {
-                document.getElementById('form-compra').style.display = 'block';
-                document.getElementById('info-pago').style.display = 'none';
-                document.getElementById('nome').value = '';
-                document.getElementById('telefone').value = '';
-                document.getElementById('aluno').value = '';
-            }
+      if (lista.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#7F5E48;">Nenhum aluno registrado nas vendas ainda.</div>`;
+      } else {
+        lista.forEach((item, idx) => {
+          const medalha = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : '🎒'));
+          const row = document.createElement('div');
+          row.className = 'metric-card';
+          row.style.padding = '10px 14px';
+          row.innerHTML = `
+            <div style="font-size:1.5rem;">${medalha}</div>
+            <div style="flex:1;">
+              <strong style="color:var(--stroke-dark); font-size:1.05rem;">${item.nome}</strong>
+              <div style="font-size:0.8rem; color:#6C5547;">${item.qtd} bilhete(s) vendido(s)</div>
+            </div>
+            <div class="badge-pill badge-target">${item.qtd} bilhetes</div>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      document.getElementById('modal-overlay').style.display = 'block';
+      document.getElementById('modal-ranking').style.display = 'block';
+    };
+
+    window.fecharModalRanking = function() {
+      document.getElementById('modal-ranking').style.display = 'none';
+      document.getElementById('modal-overlay').style.display = 'none';
+    };
+
+    window.copiarRanking = function() {
+      const rankingMap = {};
+      for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+        const d = dadosLocais[i];
+        if (d && d.aluno) {
+          const alunoKey = d.aluno.trim();
+          rankingMap[alunoKey] = (rankingMap[alunoKey] || 0) + 1;
         }
+      }
+      const lista = Object.entries(rankingMap).sort((a, b) => b[1] - a[1]);
+      let texto = "🏆 RANKING DE VENDAS - RIFA ESCOLAR (Sorteio 09/Out)\n\n";
+      lista.forEach(([nome, qtd], idx) => {
+        texto += `${idx + 1}º ${nome} — ${qtd} bilhete(s)\n`;
+      });
 
-        window.salvar = async function() {
-            const n = document.getElementById('nome').value;
-            const t = document.getElementById('telefone').value;
-            const a = document.getElementById('aluno').value;
-            if (!n || !t || !a) return alert("Preencha todos os dados (Comprador, Telefone e Aluno)!");
-            
-            try {
-                await setDoc(doc(db, "vendas", selecionado.toString()), {
-                    nome: n,
-                    telefone: t,
-                    aluno: a,
-                    data: new Date().toISOString()
-                });
-                fechar();
-            } catch (e) { alert("Erro ao salvar: " + e.message); }
-        }
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Ranking copiado para a área de transferência!");
+      });
+    };
 
-        window.apagar = async function() {
-            if (confirm(`Tem certeza que deseja liberar o número ${selecionado}?`)) {
-                try {
-                    await deleteDoc(doc(db, "vendas", selecionado.toString()));
-                    fechar();
-                } catch (e) { alert("Erro ao apagar: " + e.message); }
-            }
-        }
+    // Conferência do Sorteio (09 de Outubro)
+    window.abrirModalSorteio = function() {
+      document.getElementById('inp-num-sorteado').value = '';
+      document.getElementById('card-ganhador').style.display = 'none';
+      document.getElementById('modal-overlay').style.display = 'block';
+      document.getElementById('modal-sorteio').style.display = 'block';
+      setTimeout(() => document.getElementById('inp-num-sorteado').focus(), 150);
+    };
 
-        window.fechar = function() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-    </script>
+    window.fecharModalSorteio = function() {
+      document.getElementById('modal-sorteio').style.display = 'none';
+      document.getElementById('modal-overlay').style.display = 'none';
+    };
+
+    window.conferirGanhador = function() {
+      const num = parseInt(document.getElementById('inp-num-sorteado').value);
+      const card = document.getElementById('card-ganhador');
+
+      if (!num || num < 1 || num > TOTAL_NUMEROS) {
+        card.style.display = 'none';
+        return;
+      }
+
+      const dado = dadosLocais[num];
+      card.style.display = 'block';
+
+      if (dado) {
+        document.getElementById('sorteio-vencedor-nome').innerText = `Ganhador(a): ${dado.nome} (Bilhete #${num.toString().padStart(3, '0')})`;
+        document.getElementById('sorteio-vencedor-tel').innerText = `WhatsApp: ${dado.telefone}`;
+        document.getElementById('sorteio-vencedor-aluno').innerText = `Aluno que vendeu: ${dado.aluno || 'Não informado'}`;
+
+        const telSanitizado = (dado.telefone || '').replace(/\D/g, '');
+        const msgParabens = `🎉 PARABÉNS, *${dado.nome}*! 🧸🏆\n\nSeu bilhete *#${num.toString().padStart(3, '0')}* foi o GRANDE SORTEADO na nossa *Rifa Escolar* hoje, 09 de Outubro!\n\nVocê apoiou o(a) aluno(a) *${dado.aluno || 'nossa escola'}* e foi contemplado(a)! Entre em contato com a organização para combinar a entrega do seu prêmio! 🎁✨`;
+        
+        document.getElementById('btn-whats-ganhador').onclick = () => {
+          window.open(`https://wa.me/55${telSanitizado}?text=${encodeURIComponent(msgParabens)}`, '_blank');
+        };
+      } else {
+        document.getElementById('sorteio-vencedor-nome').innerText = `O Bilhete #${num.toString().padStart(3, '0')} NÃO FOI VENDIDO!`;
+        document.getElementById('sorteio-vencedor-tel').innerText = `Status: Disponível no banco de dados.`;
+        document.getElementById('sorteio-vencedor-aluno').innerText = `Recomenda-se realizar um novo sorteio.`;
+        document.getElementById('btn-whats-ganhador').style.display = 'none';
+      }
+    };
+
+    window.copiarRelatorio = function() {
+      let texto = "Nº\tStatus\tComprador\tWhatsApp\tAluno\n";
+      for (let i = 1; i <= TOTAL_NUMEROS; i++) {
+        const d = dadosLocais[i];
+        const st = d ? (d.status || 'pago') : 'Disponível';
+        const nome = d ? (d.nome || '-') : '-';
+        const tel = d ? (d.telefone || '-') : '-';
+        const aluno = d ? (d.aluno || '-') : '-';
+        texto += `${i.toString().padStart(3, '0')}\t${st}\t${nome}\t${tel}\t${aluno}\n`;
+      }
+
+      navigator.clipboard.writeText(texto).then(() => {
+        alert("Lista completa dos 300 bilhetes copiada! Cole diretamente no Excel ou Google Planilhas.");
+      });
+    };
+
+    window.mascaraTelefone = function(input) {
+      let v = input.value.replace(/\D/g, "");
+      if (v.length > 11) v = v.slice(0, 11);
+      if (v.length > 6) {
+        input.value = `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+      } else if (v.length > 2) {
+        input.value = `(${v.slice(0, 2)}) ${v.slice(2)}`;
+      } else {
+        input.value = v;
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== document.getElementById('campo-busca')) {
+        e.preventDefault();
+        document.getElementById('campo-busca').focus();
+      }
+      if (e.key === 'Escape') {
+        fecharModal();
+      }
+      if (document.activeElement.tagName !== 'INPUT') {
+        if (e.key === '0') mudarCentena('todos');
+        if (e.key === '1') mudarCentena('c1');
+        if (e.key === '2') mudarCentena('c2');
+        if (e.key === '3') mudarCentena('c3');
+      }
+    });
+
+  </script>
 </body>
 </html>
