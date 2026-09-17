@@ -207,6 +207,8 @@
       color: var(--stroke-dark);
     }
 
+
+
     /* =========================================
        3. FERRAMENTAS DO GERENCIADOR (BOTÕES TÁTEIS)
        ========================================= */
@@ -452,6 +454,19 @@
       color: #9A8A7C;
     }
 
+    /* Bilhete Reservado: Amarelo Manteiga */
+    .ticket-card.reservado {
+      background: #FFF9C4;
+      border: 2.5px solid var(--stroke-dark);
+    }
+    .ticket-card.reservado .ticket-num {
+      color: #665012;
+    }
+    .ticket-card.reservado .ticket-sub {
+      color: #665012;
+      font-weight: 700;
+    }
+
     /* Bilhete Pago: Verde Menta Doce */
     .ticket-card.pago {
       background: #E8F5E9;
@@ -605,6 +620,33 @@
       border-color: var(--color-orange);
     }
 
+    .status-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .status-opt-btn {
+      padding: 10px;
+      border: 2.5px solid var(--stroke-dark);
+      border-radius: 14px;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--bg-white);
+      color: var(--stroke-dark);
+      box-shadow: 0 2px 0 var(--stroke-dark);
+      transition: var(--trans-bouncy);
+    }
+    .status-opt-btn.active.pago { background: var(--color-green); color: #fff; }
+    .status-opt-btn.active.reservado { background: var(--color-yellow); color: var(--stroke-dark); }
+
     /* Rodapé com Mascote Dálmata */
     .footer-bar {
       margin-top: 24px;
@@ -666,6 +708,7 @@
          1. CABEÇALHO ILUSTRADO (BOBBIE GOODS)
          ========================================= -->
     <header class="header-card">
+      <!-- Selo Circular Bobbie Goods Stamp -->
       <div class="seal-wrap" title="Selo Oficial do Gerenciador">
         <svg viewBox="0 0 200 200" width="100%" height="100%" fill="none">
           <defs>
@@ -695,6 +738,7 @@
         </svg>
       </div>
 
+      <!-- Informações Principais & Badges -->
       <div class="header-info">
         <div class="header-badges">
           <span class="badge-pill badge-date">📅 Sorteio: 09 de Outubro</span>
@@ -705,6 +749,7 @@
         <p class="header-sub">Gerenciador em tempo real dos organizadores • Apoiando nossas crianças com amor 🧸🌸</p>
       </div>
 
+      <!-- Mascote Ursinho com Bucket Hat & Botinhas Azuis -->
       <div class="header-mascot" title="Ursinho Bobbie Goods!">
         <svg viewBox="0 0 220 250" width="100%" height="100%" fill="none">
           <ellipse cx="110" cy="236" rx="65" ry="10" fill="#2C211B" opacity="0.12" />
@@ -716,6 +761,7 @@
           <ellipse cx="110" cy="182" rx="30" ry="24" fill="#F3D2A2" />
           <path d="M 72,148 C 50,158 54,185 75,182 C 84,180 82,158 72,148 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M 148,148 C 170,158 166,185 145,182 C 136,180 138,158 148,148 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Botinhas Azuis -->
           <g>
             <path d="M 75,198 C 65,198 56,206 56,218 C 56,230 76,231 92,231 C 101,231 102,218 97,208 C 93,200 87,198 75,198 Z" fill="#B6DAFA" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
             <ellipse cx="85" cy="200" rx="12" ry="5" fill="#9ACBF7" stroke="#2C211B" stroke-width="3" />
@@ -724,6 +770,7 @@
             <path d="M 145,198 C 155,198 164,206 164,218 C 164,230 144,231 128,231 C 119,231 118,218 123,208 C 127,200 133,198 145,198 Z" fill="#B6DAFA" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
             <ellipse cx="135" cy="200" rx="12" ry="5" fill="#9ACBF7" stroke="#2C211B" stroke-width="3" />
           </g>
+          <!-- Cabeça -->
           <path d="M 58,105 C 46,134 56,158 110,160 C 164,158 174,134 162,105 C 152,78 68,78 58,105 Z" fill="#E5B378" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
           <ellipse cx="78" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
           <ellipse cx="142" cy="132" rx="8" ry="5.5" fill="#F7BAC6" opacity="0.85" />
@@ -734,6 +781,7 @@
           <ellipse cx="129" cy="118" rx="3.8" ry="4.5" fill="#2C211B" />
           <circle cx="92.5" cy="116.5" r="1.2" fill="#FFFDF7" />
           <circle cx="130.5" cy="116.5" r="1.2" fill="#FFFDF7" />
+          <!-- Bucket Hat Amarelo -->
           <path d="M 72,78 C 70,42 86,30 110,30 C 134,30 150,42 148,78 Z" fill="#FEE47A" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M 70,72 C 84,68 136,68 150,72 L 149,78 C 135,74 85,74 71,78 Z" fill="#E4AF38" stroke="#2C211B" stroke-width="3" stroke-linejoin="round" />
           <path d="M 48,82 C 62,70 158,70 172,82 C 176,95 154,101 110,101 C 66,101 44,95 48,82 Z" fill="#FEE47A" stroke="#2C211B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -742,9 +790,10 @@
     </header>
 
     <!-- =========================================
-         2. PAINEL DE MÉTRICAS ILUSTRADO
+         2. PAINEL DE MÉTRICAS ILUSTRADO (CARDS COM ADESIVOS)
          ========================================= -->
     <div class="metrics-bar">
+      <!-- Pagos -->
       <div class="metric-card">
         <div class="metric-icon sold">🌸</div>
         <div class="metric-content">
@@ -753,6 +802,7 @@
         </div>
       </div>
 
+      <!-- Disponíveis -->
       <div class="metric-card">
         <div class="metric-icon avail">🍀</div>
         <div class="metric-content">
@@ -761,6 +811,7 @@
         </div>
       </div>
 
+      <!-- Arrecadação Estimada com Preço Editável -->
       <div class="metric-card" style="position:relative; cursor:pointer;" onclick="abrirModalPreco()" title="Clique para alterar o valor do bilhete">
         <div class="metric-icon money">🍯</div>
         <div class="metric-content" style="flex:1;">
@@ -776,16 +827,18 @@
     </div>
 
     <!-- =========================================
-         3. FERRAMENTAS DO GERENCIADOR
+         3. FERRAMENTAS DO GERENCIADOR (BOTÕES TÁTEIS)
          ========================================= -->
     <section class="toolbar-card">
       <div class="toolbar-top">
+        <!-- Campo de Busca Instantânea -->
         <div class="search-box">
           <span class="search-icon">🔍</span>
           <input type="text" id="campo-busca" class="search-input" placeholder="Buscar por número (ex: 42), comprador ou aluno..." oninput="filtrarRifas()">
           <span class="search-shortcut">/</span>
         </div>
 
+        <!-- Botões de Ação do Gerenciador -->
         <div class="tools-btn-group">
           <button class="btn-chunky pink" onclick="abrirModalRanking()">
             🏆 Top Alunos
@@ -796,7 +849,9 @@
         </div>
       </div>
 
+      <!-- Navegação por Centenas e Filtros de Estado -->
       <div class="toolbar-nav">
+        <!-- Abas por Centenas -->
         <div class="centenas-tabs">
           <button class="tab-pill active" data-centena="todos" onclick="mudarCentena('todos')">Todos (300)</button>
           <button class="tab-pill" data-centena="c1" onclick="mudarCentena('c1')">001 – 100</button>
@@ -804,6 +859,7 @@
           <button class="tab-pill" data-centena="c3" onclick="mudarCentena('c3')">201 – 300</button>
         </div>
 
+        <!-- Filtros Rápidos por Status -->
         <div class="status-tabs">
           <button class="status-pill active" data-status="todos" onclick="mudarStatus('todos')">Todos</button>
           <button class="status-pill" data-status="disponivel" onclick="mudarStatus('disponivel')">⚪ Disponíveis</button>
@@ -813,7 +869,7 @@
     </section>
 
     <!-- =========================================
-         4. GRADE DAS 300 RIFAS
+         4. GRADE DAS 300 RIFAS (ESTILO BILHETE DE DESENHO)
          ========================================= -->
     <main class="rifa-wrapper">
       <div class="grid-meta-bar">
@@ -821,13 +877,17 @@
         <span id="label-exibindo">Exibindo 300 bilhetes</span>
       </div>
       
-      <div class="rifa-grid" id="rifa-grid"></div>
+      <!-- Grade Dinâmica Gerada por JavaScript -->
+      <div class="rifa-grid" id="rifa-grid">
+        <!-- Bilhetes serão renderizados aqui -->
+      </div>
     </main>
 
     <!-- =========================================
          RODAPÉ COM MASCOTE DÁLMATA
          ========================================= -->
     <footer class="footer-bar">
+      <!-- Cachorrinho Dálmata SVG com caixinha de suco -->
       <div class="footer-dog" title="Dálmata Bobbie Goods!">
         <svg viewBox="0 0 220 250" width="100%" height="100%" fill="none">
           <ellipse cx="110" cy="236" rx="65" ry="10" fill="#2C211B" opacity="0.12" />
@@ -847,6 +907,7 @@
           <circle cx="132.2" cy="112.5" r="1.2" fill="#FFFDF7" />
           <ellipse cx="111" cy="122" rx="6" ry="4.5" fill="#2C211B" />
           <path d="M 111,126.5 L 111,130 M 104,131 Q 111,137 111,130 Q 111,137 118,131" fill="none" stroke="#2C211B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Suquinho de Laranja -->
           <rect x="94" y="162" width="34" height="46" rx="6" fill="#F89D42" stroke="#2C211B" stroke-width="4" />
           <rect x="94" y="176" width="34" height="16" fill="#FEE47A" />
           <circle cx="111" cy="184" r="5" fill="#F89D42" />
@@ -860,7 +921,7 @@
   </div>
 
   <!-- =========================================
-       MODAL: GERENCIAR BILHETE
+       MODAL: GERENCIAR / RESERVAR BILHETE
        ========================================= -->
   <div id="modal-overlay" class="modal-overlay" onclick="fecharModal()"></div>
 
@@ -898,6 +959,7 @@
         </div>
       </div>
 
+      <!-- Ações Operacionais -->
       <div class="modal-actions">
         <button id="btn-whatsapp" class="btn-chunky" style="background:var(--color-green); color:#fff;" onclick="dispararWhatsApp()">
           📲 Abrir Confirmação no WhatsApp
@@ -950,7 +1012,9 @@
       </div>
       <button class="btn-close-circle" onclick="fecharModalRanking()">✕</button>
     </div>
-    <div id="ranking-lista" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+    <div id="ranking-lista" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+      <!-- Lista do ranking -->
+    </div>
     <div class="modal-actions" style="margin-top:16px;">
       <button class="btn-chunky blue" onclick="copiarRanking()">
         📋 Copiar Ranking
@@ -959,7 +1023,7 @@
   </div>
 
   <!-- =========================================
-       MODAL: CONFERÊNCIA DO SORTEIO
+       MODAL: CONFERÊNCIA DO SORTEIO (09 DE OUTUBRO)
        ========================================= -->
   <div id="modal-sorteio" class="modal-box">
     <div class="modal-header">
@@ -991,7 +1055,7 @@
   </div>
 
   <!-- =========================================
-       MODAL: EDITAR VALOR DO BILHETE
+       MODAL: EDITAR VALOR DO BILHETE (PERSISTENTE)
        ========================================= -->
   <div id="modal-preco" class="modal-box" style="max-width:340px;">
     <div class="modal-header">
@@ -1024,6 +1088,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Suas credenciais aplicadas
     const firebaseConfig = {
       apiKey: "AIzaSyA8p_-E1qf1I-5q2W-oL2rhRqWFQckMKSA",
       authDomain: "rifa-dia-dos-namorados-a6c46.firebaseapp.com",
@@ -1043,6 +1108,7 @@
     let dadosLocais = {};
     let centenaAtiva = 'todos';
     let statusAtivo = 'todos';
+    let estadoFormSelecionado = 'pago';
     let confirmacaoLiberarPendente = false;
 
     // Sincronização em tempo real das configurações (Preço da Rifa persistente)
@@ -1067,6 +1133,7 @@
       }
     }
 
+    // Inicialização da exibição do preço
     atualizarExibicaoPreco();
 
     // Sincronização em tempo real
@@ -1102,7 +1169,7 @@
       document.getElementById('total-arrecadado').innerText = totalArrecadado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // Renderização dos Bilhetes
+    // Renderização dos Bilhetes com Estética Drawing + Miolo Limpo
     window.renderizarGrade = function() {
       const container = document.getElementById('rifa-grid');
       container.innerHTML = '';
@@ -1144,6 +1211,7 @@
         const numFormatado = i.toString().padStart(3, '0');
         const subTexto = (status === 'pago') ? (dado.nome ? dado.nome.split(' ')[0] : 'Pago') : 'Livre';
 
+        // Estética Drawing autêntica: Número expressivo + 1 linha de texto limpa
         card.innerHTML = `
           <div class="ticket-num">${numFormatado}</div>
           <div class="ticket-sub" title="${dado ? (dado.nome + ' (Aluno: ' + (dado.aluno || '-') + ')') : 'Disponível'}">${subTexto}</div>
@@ -1257,6 +1325,24 @@
       }
     };
 
+    window.alternarStatus = async function() {
+      const dado = dadosLocais[bilheteSelecionado];
+      if (!dado) return;
+
+      const novoStatus = (dado.status === 'reservado') ? 'pago' : 'reservado';
+
+      try {
+        await setDoc(doc(db, "vendas", bilheteSelecionado.toString()), {
+          ...dado,
+          status: novoStatus,
+          dataAtualizacao: new Date().toISOString()
+        });
+        abrirModalBilhete(bilheteSelecionado);
+      } catch (e) {
+        alert("Erro ao alternar status: " + e.message);
+      }
+    };
+
     window.confirmarLiberacao = async function() {
       const btn = document.getElementById('btn-liberar');
       if (!confirmacaoLiberarPendente) {
@@ -1274,7 +1360,6 @@
       }
     };
 
-    // Disparo no WhatsApp com proteção Unicode contra corrupção de caracteres
     window.dispararWhatsApp = function() {
       const dado = dadosLocais[bilheteSelecionado];
       if (!dado) return;
@@ -1284,15 +1369,7 @@
       const primeiroNome = (dado.nome || 'Amigo(a)').split(' ')[0];
       const nomeAluno = dado.aluno || 'nossa turma';
 
-      // Emojis seguros via escape UTF-16/Unicode
-      const urso = '\u{1F9F8}';
-      const trevo = '\u{1F340}';
-      const mochila = '\u{1F392}';
-      const calendario = '\u{1F4C5}';
-      const brilhos = '\u{2728}';
-      const festa = '\u{1F389}';
-
-      const mensagem = `Olá, *${primeiroNome}*! ${urso}${trevo}\n\nConfirmamos com carinho o seu bilhete *#${numFormatado}* da nossa *Rifa Escolar* apoiando o(a) aluno(a) *${nomeAluno}*! ${mochila}\n\n${calendario} *Data do Sorteio:* 09 de Outubro\n\nMuito obrigado pelo apoio e boa sorte! Estamos na torcida! ${brilhos}${festa}`;
+      const mensagem = `Olá, *${primeiroNome}*! 🧸🍀\n\nConfirmamos com carinho o seu bilhete *#${numFormatado}* da nossa *Rifa Escolar* apoiando o(a) aluno(a) *${nomeAluno}*! 🎒\n\n📅 *Data do Sorteio:* 09 de Outubro\n\nMuito obrigado pelo apoio e boa sorte! Estamos na torcida! ✨🎉`;
 
       const url = `https://wa.me/55${telSanitizado}?text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
@@ -1307,7 +1384,7 @@
       confirmacaoLiberarPendente = false;
     };
 
-    // Modal de Edição do Preço do Bilhete
+    // Modal de Edição do Preço do Bilhete (Persistente no Firestore e LocalStorage)
     window.abrirModalPreco = function() {
       const inp = document.getElementById('inp-preco-unitario');
       inp.value = precoBilhete;
@@ -1443,15 +1520,7 @@
         document.getElementById('sorteio-vencedor-aluno').innerText = `Aluno que vendeu: ${dado.aluno || 'Não informado'}`;
 
         const telSanitizado = (dado.telefone || '').replace(/\D/g, '');
-        
-        // Emojis seguros via escape
-        const festa = '\u{1F389}';
-        const urso = '\u{1F9F8}';
-        const trofeu = '\u{1F3C6}';
-        const presente = '\u{1F381}';
-        const brilhos = '\u{2728}';
-
-        const msgParabens = `${festa} PARABÉNS, *${dado.nome}*! ${urso}${trofeu}\n\nSeu bilhete *#${num.toString().padStart(3, '0')}* foi o GRANDE SORTEADO na nossa *Rifa Escolar* hoje, 09 de Outubro!\n\nVocê apoiou o(a) aluno(a) *${dado.aluno || 'nossa escola'}* e foi contemplado(a)! Entre em contato com a organização para combinar a entrega do seu prêmio! ${presente}${brilhos}`;
+        const msgParabens = `🎉 PARABÉNS, *${dado.nome}*! 🧸🏆\n\nSeu bilhete *#${num.toString().padStart(3, '0')}* foi o GRANDE SORTEADO na nossa *Rifa Escolar* hoje, 09 de Outubro!\n\nVocê apoiou o(a) aluno(a) *${dado.aluno || 'nossa escola'}* e foi contemplado(a)! Entre em contato com a organização para combinar a entrega do seu prêmio! 🎁✨`;
         
         document.getElementById('btn-whats-ganhador').onclick = () => {
           window.open(`https://wa.me/55${telSanitizado}?text=${encodeURIComponent(msgParabens)}`, '_blank');
