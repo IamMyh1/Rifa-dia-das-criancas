@@ -182,7 +182,6 @@
     }
 
     .metric-icon.sold { background: var(--color-pink); }
-    .metric-icon.reserved { background: var(--color-yellow); }
     .metric-icon.avail { background: var(--color-green); }
     .metric-icon.money { background: var(--color-blue); }
 
@@ -208,7 +207,7 @@
     }
 
     /* =========================================
-       3. FERRAMENTAS DO GERENCIADOR (BOTÕES TÁTEIS)
+       3. FERRAMENTAS DO GERENCIADOR
        ========================================= */
     .toolbar-card {
       background: var(--bg-card);
@@ -285,7 +284,6 @@
       flex-wrap: wrap;
     }
 
-    /* Botões Chunky 3D Cartoon */
     .btn-chunky {
       font-family: var(--font-display);
       font-size: 1.15rem;
@@ -320,7 +318,6 @@
     .btn-chunky.pink { background: var(--color-pink); }
     .btn-chunky.pink:hover { background: var(--color-pink-hover); }
 
-    /* Barra de Navegação por Centenas & Status */
     .toolbar-nav {
       display: flex;
       flex-wrap: wrap;
@@ -379,7 +376,7 @@
     }
 
     /* =========================================
-       4. GRADE DOS 300 BILHETES (DESENHO ARTESANAL LIMPO)
+       4. GRADE DOS 300 BILHETES
        ========================================= */
     .rifa-wrapper {
       background: var(--bg-card);
@@ -407,7 +404,6 @@
       gap: 9px;
     }
 
-    /* O Bilhete da Sorte no Estilo Drawing */
     .ticket-card {
       height: 72px;
       border-radius: 14px;
@@ -440,7 +436,6 @@
       pointer-events: none;
     }
 
-    /* Bilhete Disponível: Picotado/Tracejado de Cupom */
     .ticket-card.disponivel {
       background: var(--bg-white);
       border: 2.5px dashed var(--stroke-dark);
@@ -452,7 +447,6 @@
       color: #9A8A7C;
     }
 
-    /* Bilhete Pago: Verde Menta Doce */
     .ticket-card.pago {
       background: #E8F5E9;
       border: 2.5px solid var(--stroke-dark);
@@ -482,7 +476,7 @@
     }
 
     /* =========================================
-       5. MODAIS & RODAPÉ COM DÁLMATA
+       5. MODAIS & RODAPÉ
        ========================================= */
     .modal-overlay {
       display: none;
@@ -548,7 +542,6 @@
     }
     .btn-close-circle:hover { transform: scale(1.1) rotate(8deg); }
 
-    /* Detalhes do Número Ocupado */
     .details-box {
       background: #FFFDF8;
       border: 2.5px solid var(--stroke-dark);
@@ -574,7 +567,6 @@
       gap: 10px;
     }
 
-    /* Formulário */
     .form-group {
       display: flex;
       flex-direction: column;
@@ -605,7 +597,6 @@
       border-color: var(--color-orange);
     }
 
-    /* Rodapé com Mascote Dálmata */
     .footer-bar {
       margin-top: 24px;
       text-align: center;
@@ -1045,7 +1036,7 @@
     let statusAtivo = 'todos';
     let confirmacaoLiberarPendente = false;
 
-    // Sincronização em tempo real das configurações (Preço da Rifa persistente)
+    // Sincronização em tempo real das configurações
     onSnapshot(doc(db, "configuracoes", "rifa"), (docSnap) => {
       if (docSnap.exists()) {
         const dadosConfig = docSnap.data();
@@ -1069,7 +1060,7 @@
 
     atualizarExibicaoPreco();
 
-    // Sincronização em tempo real
+    // Sincronização em tempo real das vendas
     onSnapshot(collection(db, "vendas"), (snapshot) => {
       dadosLocais = {};
       snapshot.forEach((docSnap) => {
@@ -1274,7 +1265,7 @@
       }
     };
 
-    // Disparo no WhatsApp com proteção Unicode contra corrupção de caracteres
+    // Disparo no WhatsApp usando codificação percentual nativa UTF-8
     window.dispararWhatsApp = function() {
       const dado = dadosLocais[bilheteSelecionado];
       if (!dado) return;
@@ -1284,17 +1275,24 @@
       const primeiroNome = (dado.nome || 'Amigo(a)').split(' ')[0];
       const nomeAluno = dado.aluno || 'nossa turma';
 
-      // Emojis seguros via escape UTF-16/Unicode
-      const urso = '\u{1F9F8}';
-      const trevo = '\u{1F340}';
-      const mochila = '\u{1F392}';
-      const calendario = '\u{1F4C5}';
-      const brilhos = '\u{2728}';
-      const festa = '\u{1F389}';
+      const urso = '%F0%9F%A7%B8';      // 🧸
+      const trevo = '%F0%9F%8D%80';     // 🍀
+      const mochila = '%F0%9F%8E%92';   // 🎒
+      const agenda = '%F0%9F%93%85';    // 📅
+      const brilho = '%E2%9C%A8';       // ✨
+      const festa = '%F0%9F%8E%89';     // 🎉
+      const pulaLinha = '%0A';
 
-      const mensagem = `Olá, *${primeiroNome}*! ${urso}${trevo}\n\nConfirmamos com carinho o seu bilhete *#${numFormatado}* da nossa *Rifa Escolar* apoiando o(a) aluno(a) *${nomeAluno}*! ${mochila}\n\n${calendario} *Data do Sorteio:* 09 de Outubro\n\nMuito obrigado pelo apoio e boa sorte! Estamos na torcida! ${brilhos}${festa}`;
+      const textoPronto = 
+        `Ol%C3%A1%2C%20*${encodeURIComponent(primeiroNome)}*%21%20${urso}${trevo}` +
+        `${pulaLinha}${pulaLinha}` +
+        `Confirmamos%20com%20carinho%20o%20seu%20bilhete%20*%23${numFormatado}*%20da%20nossa%20*Rifa%20Escolar*%20apoiando%20o%28a%29%20aluno%28a%29%20*${encodeURIComponent(nomeAluno)}*%21%20${mochila}` +
+        `${pulaLinha}${pulaLinha}` +
+        `${agenda}%20*Data%20do%20Sorteio%3A*%2009%20de%20Outubro` +
+        `${pulaLinha}${pulaLinha}` +
+        `Muito%20obrigado%20pelo%20apoio%20e%20boa%20sorte%21%20Estamos%20na%20torcida%21%20${brilho}${festa}`;
 
-      const url = `https://wa.me/55${telSanitizado}?text=${encodeURIComponent(mensagem)}`;
+      const url = `https://api.whatsapp.com/send?phone=55${telSanitizado}&text=${textoPronto}`;
       window.open(url, '_blank');
     };
 
@@ -1411,7 +1409,7 @@
       });
     };
 
-    // Conferência do Sorteio (09 de Outubro)
+    // Conferência do Sorteio
     window.abrirModalSorteio = function() {
       document.getElementById('inp-num-sorteado').value = '';
       document.getElementById('card-ganhador').style.display = 'none';
@@ -1444,17 +1442,22 @@
 
         const telSanitizado = (dado.telefone || '').replace(/\D/g, '');
         
-        // Emojis seguros via escape
-        const festa = '\u{1F389}';
-        const urso = '\u{1F9F8}';
-        const trofeu = '\u{1F3C6}';
-        const presente = '\u{1F381}';
-        const brilhos = '\u{2728}';
+        const trofeu = '%F0%9F%8F%86';    // 🏆
+        const presente = '%F0%9F%8E%81';  // 🎁
+        const urso = '%F0%9F%A7%B8';      // 🧸
+        const festa = '%F0%9F%8E%89';     // 🎉
+        const brilho = '%E2%9C%A8';       // ✨
+        const pulaLinha = '%0A';
 
-        const msgParabens = `${festa} PARABÉNS, *${dado.nome}*! ${urso}${trofeu}\n\nSeu bilhete *#${num.toString().padStart(3, '0')}* foi o GRANDE SORTEADO na nossa *Rifa Escolar* hoje, 09 de Outubro!\n\nVocê apoiou o(a) aluno(a) *${dado.aluno || 'nossa escola'}* e foi contemplado(a)! Entre em contato com a organização para combinar a entrega do seu prêmio! ${presente}${brilhos}`;
-        
+        const msgParabens = 
+          `${festa}%20PARAB%C3%89NS%2C%20*${encodeURIComponent(dado.nome)}*%21%20${urso}${trofeu}` +
+          `${pulaLinha}${pulaLinha}` +
+          `Seu%20bilhete%20*%23${num.toString().padStart(3, '0')}*%20foi%20o%20GRANDE%20SORTEADO%20na%20nossa%20*Rifa%20Escolar*%20hoje%2C%2009%20de%20Outubro%21` +
+          `${pulaLinha}${pulaLinha}` +
+          `Voc%C3%AA%20apoiou%20o%28a%29%20aluno%28a%29%20*${encodeURIComponent(dado.aluno || 'nossa escola')}*%20e%20foi%20contemplado%28a%29%21%20Entre%20em%20contato%20com%20a%20organiza%C3%A7%C3%A3o%20para%20combinar%20a%20entrega%20do%20seu%20pr%C3%AAmio%21%20${presente}${brilho}`;
+
         document.getElementById('btn-whats-ganhador').onclick = () => {
-          window.open(`https://wa.me/55${telSanitizado}?text=${encodeURIComponent(msgParabens)}`, '_blank');
+          window.open(`https://api.whatsapp.com/send?phone=55${telSanitizado}&text=${msgParabens}`, '_blank');
         };
       } else {
         document.getElementById('sorteio-vencedor-nome').innerText = `O Bilhete #${num.toString().padStart(3, '0')} NÃO FOI VENDIDO!`;
